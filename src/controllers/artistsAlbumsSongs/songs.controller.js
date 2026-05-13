@@ -4,6 +4,7 @@ import {
   artistPerformance,
   sonicProfile,
   rating,
+  getMockArtistPerformance,
 } from "../../utils/mockData.js";
 import { searchSongInCache, addSongToCache } from "../../utils/cache.js";
 
@@ -145,7 +146,10 @@ export const getSongData = async (req, res) => {
       // MockData integrada
       rating: rating,
       sonicProfile: sonicProfile,
-      artistPerformance: artistPerformance,
+      artistPerformance: getMockArtistPerformance(
+        { id: mbData["artist-credit"]?.[0]?.artist?.id, name: mbData["artist-credit"]?.[0]?.name },
+        mbData["artist-credit"]?.slice(1).map((c) => ({ id: c.artist?.id, name: c.name })) || []
+      ),
       userReviews: userReviews,
     };
 
@@ -161,6 +165,21 @@ export const getSongData = async (req, res) => {
 export async function getSongBasicInfo(req, res) {
   const { mbid } = req.params;
   if (!mbid) return res.status(400).json({ error: "Song ID is required" });
+
+  const cachedSong = await searchSongInCache(mbid);
+  if (cachedSong) {
+    return res.status(200).json({
+      id: cachedSong.id,
+      title: cachedSong.title,
+      artist: cachedSong.artist,
+      artistId: cachedSong.artistId,
+      features: cachedSong.features,
+      image: cachedSong.image,
+      externalLinks: cachedSong.externalLinks,
+      sonicProfile: cachedSong.sonicProfile,
+      rating: cachedSong.rating,
+    });
+  }
 
   try {
     // Incluimos releases y release-groups para identificar si la canción viene en un Álbum o Single
@@ -199,6 +218,10 @@ export async function getSongBasicInfo(req, res) {
       title: data.title,
       artist: data["artist-credit"]?.[0]?.name || "Artista Desconocido",
       artistId: data["artist-credit"]?.[0]?.artist?.id,
+      features: data["artist-credit"]?.slice(1).map((c) => ({
+        id: c.artist?.id,
+        name: c.name,
+      })) || [],
       image: finalImage,
       externalLinks: {
         spotify:
@@ -209,7 +232,7 @@ export async function getSongBasicInfo(req, res) {
             .resource || null,
       },
       sonicProfile,
-      rating,
+      rating
     });
   } catch (error) {
     console.error(`Error fetching song info:`, error);

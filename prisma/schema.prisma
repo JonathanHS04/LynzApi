@@ -27,3 +27,11 @@ model artistCache {
   jsonData Json
   imageUrl String?
 }
+
+model user {
+  id       String   @id @default(uuid())
+  username String   @unique
+  password String
+  email    String   @unique
+  role    String  @default("user")
+}

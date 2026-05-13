@@ -12,7 +12,7 @@ export const artistPerformance = [
     id: 1,
     name: "Omar Courtz",
     role: "Main Artist",
-    score: 9.8,
+    rating: 9.8,
     image:
       "https://is1-ssl.mzstatic.com/image/thumb/AMCArtistImages221/v4/f5/7c/21/f57c21d6-590a-b07e-1027-e92e6c62cfe6/ami-identity-cee5abcdd03c2870378144a376dce33d-2025-04-18T00-19-44.218Z_cropped.png/486x486bb.png",
   },
@@ -20,11 +20,29 @@ export const artistPerformance = [
     id: 2,
     name: "Bad Gyal",
     role: "Featuring",
-    score: 8.9,
+    rating: 8.9,
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6v5uBzxRFt5jpsC33cGOUhBwB7NTSuoBo7A&s",
   },
 ];
+
+export const getMockArtistPerformance = (mainArtist, features) => {
+  const mainArtistData = {
+    id: mainArtist.id,
+    name: mainArtist.name,
+    role: "Main Artist",
+    rating: Number(getRandomRating()),
+  }
+  const featuresData = features.map((feat, index) => ({
+    id: feat.id,
+    name: feat.name,
+    role: `Featuring`,
+    rating: Number(getRandomRating()),
+  }));
+  return [
+    mainArtistData, ...featuresData
+  ]
+}
 
 export const userReviews = [
   {
