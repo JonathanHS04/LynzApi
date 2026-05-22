@@ -72,7 +72,6 @@ export const getSongData = async (req, res) => {
     const releaseId = priorityRelease?.id;
     const releaseType =
       priorityRelease?.["release-group"]?.["primary-type"] || "Unknown";
-    const isSingle = releaseType.toLowerCase() === "single";
 
     // 2. Extraer Links (Spotify / Apple Music)
     const externalLinks = {
@@ -97,7 +96,7 @@ export const getSongData = async (req, res) => {
       : "https://via.placeholder.com/500x500?text=No+Cover";
 
     // 4. Nombre a mostrar para el álbum
-    const albumDisplayName = isSingle
+    const albumDisplayName = releaseType.toLowerCase() === "single"
       ? "Sencillo"
       : priorityRelease?.title || "Single";
 
@@ -115,7 +114,6 @@ export const getSongData = async (req, res) => {
       // Datos del álbum/single
       album: albumDisplayName,
       albumType: releaseType,
-      isSingle: isSingle,
       albumId: releaseId,
       externalLinks, // <-- Nuevos links incluidos
 
